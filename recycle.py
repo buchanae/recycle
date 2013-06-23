@@ -1,5 +1,7 @@
 import itertools
 
+__version__ = '0.1'
+
 
 class Recycleable(object):
     def __init__(self, fn, *args, **kwargs):
