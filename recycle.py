@@ -4,25 +4,24 @@ __version__ = '0.1'
 
 
 class Recycleable(object):
-    def __init__(self, fn, *args, **kwargs):
+
+    def __init__(self, fn):
         self.fn = fn
+        self.args = []
+        self.kwargs = {}
+
+    def __call__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
+        return self
 
     def __iter__(self):
         return self.fn(*self.args, **self.kwargs)
 
-def recycleable(fn):
-    def wrapper(*args, **kwargs):
-        return Recycleable(fn, *args, **kwargs)
-    return wrapper
+    @classmethod
+    def map(cls, fn, *iterables):
+        return cls(itertools.imap)(fn, *iterables)
 
-@recycleable
-def map(fn, *iterables):
-    return itertools.imap(fn, *iterables)
-
-@recycleable
-def chain(*iterables):
-    return itertools.chain.from_iterable(iterables)
-
-chain.from_iterable = lambda iterable: chain(*iterable)
+    @classmethod
+    def chain(cls, *iterables):
+        return cls(itertools.chain.from_iterable)(iterables)

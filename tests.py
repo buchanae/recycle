@@ -9,7 +9,7 @@ def gen(length):
         yield x
 
 
-@recycle.recycleable
+@recycle.Recycleable
 def decorated_gen(length):
     return gen(length)
 
@@ -23,7 +23,9 @@ def test_Recycleable():
     eq_([x for x in g], [])
 
     # Wrapping it in a Recyclable means that it can be iterated over multiple times.
-    r = recycle.Recycleable(gen, 5)
+    rgen = recycle.Recycleable(gen)
+    r = rgen(5)
+
     eq_([x for x in r], [0, 1, 2, 3, 4])
     eq_([x for x in r], [0, 1, 2, 3, 4])
 
@@ -41,7 +43,7 @@ def test_map():
     map_func = lambda x: x * 2
 
     r = decorated_gen(5)
-    r = recycle.map(map_func, r)
+    r = recycle.Recycleable.map(map_func, r)
 
     eq_([x for x in r], [0, 2, 4, 6, 8])
     eq_([x for x in r], [0, 2, 4, 6, 8])
@@ -50,7 +52,7 @@ def test_map():
 def test_chain():
     a = decorated_gen(5)
     b = decorated_gen(5)
-    r = recycle.chain(a, b)
+    r = recycle.Recycleable.chain(a, b)
 
     eq_([x for x in r], [0, 1, 2, 3, 4, 0, 1, 2, 3, 4])
 
@@ -61,8 +63,8 @@ def test_chain_and_map():
 
     a = decorated_gen(5)
     b = decorated_gen(5)
-    c = recycle.chain(a, b)
-    r = recycle.map(map_func, c)
+    c = recycle.Recycleable.chain(a, b)
+    r = recycle.Recycleable.map(map_func, c)
     eq_([x for x in r], [0, 2, 4, 6, 8, 0, 2, 4, 6, 8])
 
 if __name__ == '__main__':
