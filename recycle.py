@@ -5,6 +5,9 @@ __version__ = '0.1'
 
 class Recycleable(object):
 
+    # TODO problem here is that this delays construction of the object
+    #      so errors are delayed too. E.g. if the parameter count for the decorated
+    #      function is wrong, it won't be raised until __iter__ is called
     def __init__(self, fn):
         self.fn = fn
         self.args = []
